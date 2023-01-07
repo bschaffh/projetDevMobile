@@ -14,7 +14,7 @@ export async function searchPlace(searchTerm) {
     }
 }
 
-export async function getPlaceInfo(lat, lon) {
+export async function getPlaceWeather(lat, lon) {
     try {
         const url = `${WEATHER_API_URL}current.json?key=${WEATHER_API_KEY}&q=${lat},${lon}&aqi=yes`;
         console.log(url)

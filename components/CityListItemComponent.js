@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
 import { useState } from "react";
-import { getPlaceInfo } from "../api/WeatherAPI";
+import { getPlaceWeather } from "../api/WeatherAPI";
 
 const CityListItem = ({city}) => {
     const [isWeatherLoading, setIsWeatherLoading] = useState(true);
@@ -16,13 +16,13 @@ const CityListItem = ({city}) => {
         setIsWeatherLoading(true);
         console.log("demande pour "+ city.name)
         try {
-            const _weather = await getPlaceInfo(city.lattitude, city.longitude);
+            const _weather = await getPlaceWeather(city.lattitude, city.longitude);
             setWeather(_weather.current);
         }
         catch(error){
             setWeather([]);
         }
-        
+
         setIsWeatherLoading(false);
     }
 
