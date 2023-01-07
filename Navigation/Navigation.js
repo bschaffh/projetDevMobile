@@ -4,9 +4,11 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import CityInformations from "../components/CityInformationsComponent";
 import FavedCities from "../components/FavedCitiesComponent";
+import Search from "../components/SearchComponent";
 
 const DefaultNavigation = createStackNavigator();
 const FavedCitiesNavigation = createStackNavigator();
+const SearchNavigation = createStackNavigator();
 const TabNavigation = createBottomTabNavigator();
 
 function DefaultStack() {
@@ -19,6 +21,20 @@ function DefaultStack() {
         component={CityInformations}
       />
     </DefaultNavigation.Navigator>
+  );
+}
+
+function SearchStack() {
+  return (
+    <SearchNavigation.Navigator screenOptions={{
+      headerShown: false,
+    }} initialRouteName="Search">
+      <SearchNavigation.Screen 
+        name="Search"
+        component={Search}
+        options={{title: "Recherche"}}
+      />
+    </SearchNavigation.Navigator>
   );
 }
 
@@ -49,6 +65,10 @@ function RootStack() {
       <TabNavigation.Screen
         name="Accueil"
         component={DefaultStack}
+      />
+      <TabNavigation.Screen
+        name="Recherche"
+        component={SearchStack}
       />
       <TabNavigation.Screen
         name="Favoris"
