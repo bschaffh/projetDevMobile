@@ -17,10 +17,13 @@ const savedCitiesSlice = createSlice({
         },
         unSaveCityByName(state, action){
             state.cities = state.cities.filter((name) => name !== action.payload);
+        },
+        clearSavedCities(state){
+            state.cities = [];
         }
     }
 })
 
-export const {saveCity, unSaveCityByName} = savedCitiesSlice.actions;
+export const {saveCity, unSaveCityByName, clearSavedCities} = savedCitiesSlice.actions;
 export default savedCitiesSlice.reducer;
 

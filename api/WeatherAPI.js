@@ -5,6 +5,7 @@ export async function searchPlace(searchTerm) {
     try {
         const url = `${WEATHER_API_URL}search.json?key=${WEATHER_API_KEY}&q=${searchTerm}`;
         const response = await fetch(url);
+        console.log(url)
         const json = await response.json();
         return json;
     } catch (error) {
@@ -16,6 +17,7 @@ export async function searchPlace(searchTerm) {
 export async function getPlaceInfo(lat, lon) {
     try {
         const url = `${WEATHER_API_URL}current.json?key=${WEATHER_API_KEY}&q=${lat},${lon}&aqi=yes`;
+        console.log(url)
         const response = await fetch(url);
         const json = await response.json();
         return json;
