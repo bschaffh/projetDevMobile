@@ -2,12 +2,12 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import CityInformations from "../components/CityInformationsComponent";
-import FavedCities from "../components/FavedCitiesComponent";
+import BusinessInformations from "../components/BusinessInformationsComponent";
+import FavedBusinesses from "../components/FavedBusinessesComponent";
 import Search from "../components/SearchComponent";
 
 const DefaultNavigation = createStackNavigator();
-const FavedCitiesNavigation = createStackNavigator();
+const FavedBusinessesNavigation = createStackNavigator();
 const SearchNavigation = createStackNavigator();
 const TabNavigation = createBottomTabNavigator();
 
@@ -15,10 +15,10 @@ function DefaultStack() {
   return (
     <DefaultNavigation.Navigator screenOptions={{
       headerShown: false,
-    }} initialRouteName="CityInfoView">
+    }} initialRouteName="BusinessInfoView">
       <DefaultNavigation.Screen
-        name="CityInfoView"
-        component={CityInformations}
+        name="BusinessInfoView"
+        component={BusinessInformations}
       />
     </DefaultNavigation.Navigator>
   );
@@ -34,25 +34,32 @@ function SearchStack() {
         component={Search}
         options={{title: "Recherche"}}
       />
+      <SearchNavigation.Screen
+        name="SearchMap"
+        component={BusinessInformations}
+        options={{
+          headerLeft: () => (<Button title="Update count" />) 
+        }}
+      />
     </SearchNavigation.Navigator>
   );
 }
 
 function FavedStack() {
   return (
-    <FavedCitiesNavigation.Navigator screenOptions={{
+    <FavedBusinessesNavigation.Navigator screenOptions={{
       headerShown: false,
-    }} initialRouteName="FavedCitiesList">
-      <FavedCitiesNavigation.Screen 
-        name="FavedCitiesList"
-        component={FavedCities}
+    }} initialRouteName="FavedBusinessesList">
+      <FavedBusinessesNavigation.Screen 
+        name="FavedBusinessesList"
+        component={FavedBusinesses}
         options={{title: "Favoris"}}
       />
-      <FavedCitiesNavigation.Screen
-        name="FavedCityInfoView"
-        component={CityInformations}
+      <FavedBusinessesNavigation.Screen
+        name="FavedBusinessInfoView"
+        component={BusinessInformations}
       />
-    </FavedCitiesNavigation.Navigator>
+    </FavedBusinessesNavigation.Navigator>
   );
 }
 
@@ -62,10 +69,6 @@ function RootStack() {
       screenOptions={{
         headerShown: false,
       }}>
-      <TabNavigation.Screen
-        name="Accueil"
-        component={DefaultStack}
-      />
       <TabNavigation.Screen
         name="Recherche"
         component={SearchStack}

@@ -1,52 +1,44 @@
 import React, { useEffect } from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
 import { useState } from "react";
-import { getPlaceWeather } from "../api/WeatherAPI";
 
-const CityListItem = ({city}) => {
+const BusinessListItem = ({business}) => {
     const [isWeatherLoading, setIsWeatherLoading] = useState(true);
     const [weather, setWeather] = useState();
 
     useEffect(() => {
-        console.log("affichage dela ville " + city.name);
+        console.log("affichage dela ville " + business.name);
         loadWeather();
     }, []);
 
     loadWeather = async () => {
-        setIsWeatherLoading(true);
+        /*setIsWeatherLoading(true);
         console.log("demande pour "+ city.name)
         try {
             const _weather = await getPlaceWeather(city.lattitude, city.longitude);
             setWeather(_weather.current);
         }
         catch(error){
+            console.log("dzqdzqdzqdqzdqzdqzdqz" + error)
             setWeather([]);
         }
 
-        setIsWeatherLoading(false);
+        setIsWeatherLoading(false);*/
     }
 
     
 
     return (
         <View style={styles.container}>
-            <Text style={styles.cityName}>
-                {city.name}
+            <Text style={styles.businessName}>
+                {business.name}
             </Text>
-            {!isWeatherLoading && weather && 
-                <View>
-                    <Text>{weather.temp_c}°C (Ressenti )</Text>
-                    <Image 
-                        style={styles.icon} 
-                        source={{uri: "http:".concat( weather.condition.icon.toString())}}
-                    />
-                </View>
-            }
+            <Text>Distance : {Math.floor(business.distance)}m</Text>
         </View>
     )
 }
 
-export default CityListItem;
+export default BusinessListItem;
 
 const styles = StyleSheet.create({
     container: {
@@ -60,12 +52,12 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         borderRadius: 15,
     },
-    cityName: {
+    businessName: {
         flex: 2,
         fontSize: 20,
         fontWeight: 'bold'
     },
-    cityInfos: {
+    businessInfos: {
         flex: 1
     },
     icon: {

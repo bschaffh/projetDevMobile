@@ -11,18 +11,18 @@ import {
 } from "redux-persist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import SavedCitiesReducer from "./reducers/savedCities";
+import SavedBusinessesReducer from "./reducers/savedBusinesses";
 
 const configPersist = {
   key: "root",
   storage: AsyncStorage,
 };
 
-const persistedReducer = persistReducer(configPersist, SavedCitiesReducer);
+const persistedReducer = persistReducer(configPersist, SavedBusinessesReducer);
 
 export const store = configureStore({
   reducer: {
-    savedCities: persistedReducer,
+    savedBusinesses: persistedReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
