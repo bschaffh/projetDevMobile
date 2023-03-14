@@ -58,7 +58,6 @@ const BusinessesMap = ({route}) => {
             initialRegion={currentPosition}
             region={currentPosition}
             style={styles.mapStyle}
-            customMapStyle={mapStyle}
         >
           <Marker 
             coordinate={{latitude: route.params.latitudeProp, longitude: route.params.longitudeProp}}
@@ -111,31 +110,5 @@ const styles = StyleSheet.create({
       color: "red",
     }
   });
-
-const mapStyle = [
-  {
-    elementType: "labels",
-    stylers: [
-      {
-        visibility: "off"
-      }
-    ]
-  },
-  {
-    featureType: "administrative.land_parcel",
-    stylers: [
-      {
-        visibility: "off"
-      }
-    ]
-  },
-  {
-    featureType: "administrative.neighborhood",
-    stylers: [
-      {
-        visibility: "off"
-      }
-    ]
-  }];
 
 export default BusinessesMap;
