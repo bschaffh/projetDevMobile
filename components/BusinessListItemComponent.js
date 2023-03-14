@@ -1,40 +1,28 @@
 import React, { useEffect } from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { useState } from "react";
 
-const BusinessListItem = ({business}) => {
-    const [isWeatherLoading, setIsWeatherLoading] = useState(true);
-    const [weather, setWeather] = useState();
-
+const BusinessListItem = ({business, navigation}) => {
     useEffect(() => {
         console.log("affichage dela ville " + business.name);
-        loadWeather();
     }, []);
 
-    loadWeather = async () => {
-        /*setIsWeatherLoading(true);
-        console.log("demande pour "+ city.name)
-        try {
-            const _weather = await getPlaceWeather(city.lattitude, city.longitude);
-            setWeather(_weather.current);
-        }
-        catch(error){
-            console.log("dzqdzqdzqdqzdqzdqzdqz" + error)
-            setWeather([]);
-        }
-
-        setIsWeatherLoading(false);*/
+    const navigateToDetails = () => {
+        console.log("nav");
+        navigation.navigate('BusinessDetails', {
+            business: business
+        })
     }
 
-    
-
     return (
-        <View style={styles.container}>
-            <Text style={styles.businessName}>
-                {business.name}
-            </Text>
-            <Text>Distance : {Math.floor(business.distance)}m</Text>
-        </View>
+        <TouchableOpacity style={styles.container} onPress={() => navigateToDetails()}>
+            <View>
+                <Text style={styles.businessName}>
+                    {business.name}
+                </Text>
+                <Text>Distance : {Math.floor(business.distance)}m</Text>
+            </View>
+        </TouchableOpacity>
     )
 }
 

@@ -11,9 +11,7 @@ const Search = ({navigation}) => {
     const [allCategories, setAllCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
-    const [searchLocation, setSearchLocation] = useState("");
     const [searchDistance, setSearchDistance] = useState(1000);
-    const [isDistanceOK, setIsDistanceOK] = useState(true);
     
     const [latitude, setLatitude] = useState();
     const [longitude, setLongitude] = useState();
@@ -23,7 +21,6 @@ const Search = ({navigation}) => {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [isError, setIsError] = useState(false);
 
-    let onEndReachedCalledDuringMomentum = false;
     let pageNumber = 0;
     const pageSize = 20;
 
@@ -44,8 +41,6 @@ const Search = ({navigation}) => {
 
     const newSearchBusinesses = () => {
         pageNumber = 0;
-        const latitude = '49.117340';
-        const longitude = '6.177030';
         searchBusinesses(latitude, longitude, searchTerm, searchDistance, selectedCategories, pageSize, 0).then(
             results => {
                 setFoundBusinesses(results.businesses);
@@ -55,17 +50,17 @@ const Search = ({navigation}) => {
 
     const findPosition = async () => {
         let { status } = await Location.requestForegroundPermissionsAsync();
+        console.log(status)
         if (status !== 'granted') {
           setErrorMsg('Permission to access location was denied');
           setIsPositionFound(false);
+          console.log("Impossible de trouver la position")
           return;
         }
   
         let location = await Location.getCurrentPositionAsync({});
         setLatitude(location.coords.latitude);
         setLongitude(location.coords.longitude);
-        console.log(latitude);
-        console.log(longitude);
         setIsPositionFound(true);
       }
 
@@ -92,8 +87,8 @@ const Search = ({navigation}) => {
         console.log("navig ", foundBusinesses)
         navigation.navigate('SearchMap', {
             businessesProp: foundBusinesses, 
-            latitudeProp: '49.117340', 
-            longitudeProp: '6.177030', 
+            latitudeProp: latitude,
+            longitudeProp: longitude, 
             searchTermProp: searchTerm,
             searchDistanceProp: searchDistance,
             selectedCategories: selectedCategories
@@ -156,7 +151,7 @@ const Search = ({navigation}) => {
                         data={foundBusinesses}
                         keyExtractor={(item) => item.id}
                         renderItem={({ item }) => (
-                            <BusinessListItem business={item}
+                            <BusinessListItem navigation={navigation} business={item}
                             />
                         )}
                         refreshing={isRefreshing}

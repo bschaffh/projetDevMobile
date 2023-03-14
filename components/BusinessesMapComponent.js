@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Text, Dimensions, FlatList } from "react-native";
 import MapView, { Marker, Callout } from "react-native-maps";
-import { useSelector } from "react-redux";
 import { searchBusinesses } from "../api/yelpAPI";
 import BusinessListItem from "./BusinessListItemComponent";
 
-import * as Location from 'expo-location';
-const BusinessInformations = ({route}) => {
+const BusinessesMap = ({route}) => {
     const [foundBusinesses, setFoundBusinesses] = useState(route.params.businessesProp);
     const [latitude, setLatitude] = useState(route.params.latitudeProp);
     const [longitude, setLongitude] = useState(route.params.longitudeProp);
@@ -140,4 +138,4 @@ const mapStyle = [
     ]
   }];
 
-export default BusinessInformations;
+export default BusinessesMap;

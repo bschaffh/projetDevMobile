@@ -2,27 +2,15 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import BusinessInformations from "../components/BusinessInformationsComponent";
+import BusinessesMap from "../components/BusinessesMapComponent";
 import FavedBusinesses from "../components/FavedBusinessesComponent";
 import Search from "../components/SearchComponent";
+import BusinessDetails from "../components/BusinessDetailsComponent";
 
 const DefaultNavigation = createStackNavigator();
 const FavedBusinessesNavigation = createStackNavigator();
 const SearchNavigation = createStackNavigator();
 const TabNavigation = createBottomTabNavigator();
-
-function DefaultStack() {
-  return (
-    <DefaultNavigation.Navigator screenOptions={{
-      headerShown: false,
-    }} initialRouteName="BusinessInfoView">
-      <DefaultNavigation.Screen
-        name="BusinessInfoView"
-        component={BusinessInformations}
-      />
-    </DefaultNavigation.Navigator>
-  );
-}
 
 function SearchStack() {
   return (
@@ -36,10 +24,11 @@ function SearchStack() {
       />
       <SearchNavigation.Screen
         name="SearchMap"
-        component={BusinessInformations}
-        options={{
-          headerLeft: () => (<Button title="Update count" />) 
-        }}
+        component={BusinessesMap}
+      />
+      <SearchNavigation.Screen
+        name="BusinessDetails"
+        component={BusinessDetails}
       />
     </SearchNavigation.Navigator>
   );
@@ -56,8 +45,8 @@ function FavedStack() {
         options={{title: "Favoris"}}
       />
       <FavedBusinessesNavigation.Screen
-        name="FavedBusinessInfoView"
-        component={BusinessInformations}
+        name="BusinessDetails"
+        component={BusinessDetails}
       />
     </FavedBusinessesNavigation.Navigator>
   );

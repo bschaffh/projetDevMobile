@@ -1,7 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    businesses : []
+    businesses : [
+        {id: 'wdzqdzq', name: 'fav1'}
+    ]
 };
 
 const savedBusinessesSlice = createSlice({
@@ -9,13 +11,13 @@ const savedBusinessesSlice = createSlice({
     initialState: initialState,
     reducers: {
         saveBusiness(state, action){
-            state.cities.push(action.payload);
+            state.businesses.push(action.payload);
         },
         unSaveBusinessById(state, action){
-            state.cities = state.cities.filter((id) => id !== action.payload);
+            state.businesses = state.businesses.filter((id) => id !== action.payload);
         },
         clearSavedBusinesses(state){
-            state.cities = [];
+            state.businesses = [];
         }
     }
 })

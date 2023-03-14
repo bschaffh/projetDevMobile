@@ -3,42 +3,29 @@ import { useEffect } from "react"
 import { Button, StyleSheet, Text, View } from "react-native"
 import { FlatList } from "react-native-gesture-handler"
 import { useDispatch, useSelector } from "react-redux"
-import {unSaveBusinessById, clearSavedBusinesses} from "../store/reducers/savedBusinesses" 
+import { clearSavedBusinesses, saveBusiness } from "../store/reducers/savedBusinesses"
 import BusinessListItem from "./BusinessListItemComponent"
 
-import cities from 'cities.json';
-
-const FavedBusinesses = (props) => {
+const FavedBusinesses = ({navigation}) => {
     const savedBusinesses = useSelector((state) => state.savedBusinesses.businesses)
     const dispatch = useDispatch();
 
     useEffect(() => {
-        addBusiness();
         console.log("----------------------" + savedBusinesses);
+        dispatch(clearSavedBusinesses());
     }, []);
-
-    const addBusiness = () => {
-        /*const newBusiness = cities[Math.floor(Math.random()*cities.length)];
-        dispatch(saveBusiness({name: newBusiness.name, lattitude: newBusiness.lat, longitude: newBusiness.lng}));*/
-    }
-
-    const clearBusiness = () => {
-        //dispatch(clearSavedCities());
-    }
-    
-    /*savedCities.forEach(element => {
-        console.log(element.name)
-    });*/
 
     return (
         <View style={styles.container}>
-            <Text>Villes enregistrées</Text>
+            <Text>Lieux enregistrées</Text>
             <FlatList
                 data={savedBusinesses}
-                renderItem={({ item }) => <BusinessListItem business={item}></BusinessListItem>}
+                renderItem={({ item }) => 
+                    <BusinessListItem navigation={navigation} business={item}keyExtractor={(item) => item.id}></BusinessListItem>
+                }
             />
-            <Button onPress={() => clearBusiness()} title="Vider"/>
-            <Button onPress={() => addBusiness()} title="Ajouter ville"/>
+            <Button onPress={() => {}} title="Vider"/>
+            <Button onPress={() => {}} title="Ajouter un lieu"/>
 
         </View>
     )
