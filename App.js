@@ -1,5 +1,5 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import RootStack from './Navigation/Navigation';
 import { Provider } from 'react-redux';
 import { persistor, store } from './store/config';
