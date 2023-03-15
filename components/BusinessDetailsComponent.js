@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, StyleSheet, View, Image, TouchableOpacity } from "react-native";
+import { Text, StyleSheet, View, Image, TouchableOpacity, Linking, Alert } from "react-native";
 
 import Colors from "../definitions/Colors";
 import Assets from "../definitions/Assets";
@@ -49,6 +49,39 @@ const BusinessDetails = ({route}) => {
       setIsSaved(!isSaved);
     };
 
+    const phoneCall = () => {
+      if (business.phone) {
+        Alert.alert(`Faire un appel à ${business.name}`, `Numéro: ${business.phone}`, [
+            {
+                text: 'Retour',
+                style: 'cancel',
+            }, {
+                text: 'Oui', 
+                onPress: () => {
+                  Linking.openURL(`tel:${business.phone}`)
+                }
+            },
+        ]);
+      }
+    }
+
+    const maps = () => {
+      let url = `https://www.google.com/maps/dir/?api=1&destination=${business.coordinates.latitude},${business.coordinates.longitude}&dir_action=navigate`;
+      if (business.coordinates.latitude && business.coordinates.longitude) {
+        Alert.alert(`Montrer un itinéraire vers ${business.name}`, `Adresse: ${business.location.display_address.join(", ")}`, [
+            {
+                text: 'Retour',
+                style: 'cancel',
+            }, {
+                text: 'Oui', 
+                onPress: () => {
+                  Linking.openURL(url);
+                }
+            },
+        ]);
+      }
+    }
+
     return (
         <View style={styles.container}>
             {displayImage()}
@@ -56,7 +89,7 @@ const BusinessDetails = ({route}) => {
               <View style={styles.containerHeader}>
                 <Text style={styles.textTitle}>{business.name}</Text>
                 <Text>{business.rating}/5</Text>
-              <Text>{business.is_closed ? "Fermé" : "Ouvert"}</Text>
+                { business.is_closed !== undefined && <Text>{business.is_closed ? "Fermé" : "Ouvert"}</Text>}
               </View>
               <View style={styles.containerFav}>
                 <TouchableOpacity activeOpacity = { .5 } onPress={favouritePressed}>
@@ -65,9 +98,15 @@ const BusinessDetails = ({route}) => {
               </View>
             </View>
             <View style={styles.containerCardBottom}>
-              <Text>À {Math.round(business.distance)} mètres.</Text>
-              <Text>Tel: {business.display_phone}</Text>
-              <Text>{business.location.display_address.join(", ")}</Text>
+              <TouchableOpacity activeOpacity = { .5 } onPress={phoneCall}>
+                <Text>Tel: <Text style={styles.phoneNumber}>{business.display_phone}</Text></Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.containerCardBottom}>
+              <TouchableOpacity activeOpacity = { .5 } onPress={maps}>
+                <Text>À {Math.round(business.distance)} mètres.</Text>
+                <Text>{business.location.display_address.join(", ")}</Text>
+              </TouchableOpacity>
             </View>
         </View>
     )
@@ -124,6 +163,9 @@ const styles = StyleSheet.create({
       borderTopLeftRadius: 3,
       borderTopRightRadius: 3,
     }, 
+    phoneNumber: {
+      color: Colors.primary_blue
+    }
   });
 
 export default BusinessDetails;

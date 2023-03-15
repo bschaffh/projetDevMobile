@@ -10,6 +10,7 @@ const savedBusinessesSlice = createSlice({
     initialState: initialState,
     reducers: {
         saveBusiness(state, action){
+            delete action.payload.is_closed; // will not always stay the same
             state.businesses[action.payload.id] = action.payload;
             Toast.show(`${action.payload.name} a été ajouté favoris.`, {
                 duration: Toast.durations.SHORT,
