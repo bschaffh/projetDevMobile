@@ -4,14 +4,17 @@ import RootStack from './Navigation/Navigation';
 import { Provider } from 'react-redux';
 import { persistor, store } from './store/config';
 import { PersistGate } from 'redux-persist/integration/react';
+import { RootSiblingParent } from "react-native-root-siblings";
 
 export default function App() {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <NavigationContainer style={styles.container}>
-          <RootStack style={styles.container}/>
-        </NavigationContainer>
+        <RootSiblingParent>
+          <NavigationContainer style={styles.container}>
+            <RootStack style={styles.container}/>
+          </NavigationContainer>
+        </RootSiblingParent>
       </PersistGate>
     </Provider>
   );
