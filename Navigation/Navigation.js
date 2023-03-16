@@ -15,7 +15,6 @@ const TabNavigation = createBottomTabNavigator();
 function SearchStack() {
   return (
     <SearchNavigation.Navigator screenOptions={{
-      headerShown: false,
     }} initialRouteName="Search">
       <SearchNavigation.Screen 
         name="Search"
@@ -25,10 +24,12 @@ function SearchStack() {
       <SearchNavigation.Screen
         name="SearchMap"
         component={BusinessesMap}
+        options={{title: "Résultats"}}
       />
       <SearchNavigation.Screen
         name="BusinessDetails"
         component={BusinessDetails}
+        options={{title: "Détails"}}
       />
     </SearchNavigation.Navigator>
   );
@@ -37,7 +38,6 @@ function SearchStack() {
 function FavedStack() {
   return (
     <FavedBusinessesNavigation.Navigator screenOptions={{
-      headerShown: false,
     }} initialRouteName="FavedBusinessesList">
       <FavedBusinessesNavigation.Screen 
         name="FavedBusinessesList"
@@ -47,6 +47,7 @@ function FavedStack() {
       <FavedBusinessesNavigation.Screen
         name="BusinessDetails"
         component={BusinessDetails}
+        options={{title: "Détails"}}
       />
     </FavedBusinessesNavigation.Navigator>
   );

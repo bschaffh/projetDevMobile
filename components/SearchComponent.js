@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, Button, StyleSheet, FlatList } from "react-native"
+import { View, Text, TextInput, Button, StyleSheet, FlatList, ActivityIndicator } from "react-native"
 import { getAllCategories, searchBusinesses } from "../api/yelpAPI";
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 import NumericInput from 'react-native-numeric-input'
 import BusinessListItem from "./BusinessListItemComponent";
 import * as Location from 'expo-location';
+
+const POSITION_FIND_TIMEOUT = 5000; //5 seconds
 
 const Search = ({navigation}) => {
     const [allCategories, setAllCategories] = useState([]);
@@ -16,23 +18,15 @@ const Search = ({navigation}) => {
     const [latitude, setLatitude] = useState();
     const [longitude, setLongitude] = useState();
     const [isPositionFound, setIsPositionFound] = useState(false);
+    const [isPositionLoading, setIsPositionLoading] = useState(true);
 
-    const [foundBusinesses, setFoundBusinesses] = useState([]);
     const [isRefreshing, setIsRefreshing] = useState(false);
-    const [isError, setIsError] = useState(false);
+    const [foundBusinesses, setFoundBusinesses] = useState([]);
+    const [errorMsg, setErrorMsg] = useState("");
 
-    let pageNumber = 0;
     const pageSize = 20;
 
     useEffect(() => {
-        /*searchBusinesses('49.117340', '6.177030', null, 500, null, null, null, 20, null).then(
-            businesses => {
-                console.log("a")
-                //rrsetFoundBusinesses([...foundBusinesses, ...businesses.businesses])
-                //console.log(businesses);
-            }
-
-        );*/
         findPosition();
         getAllCategories().then(result => {
             setAllCategories(result.categories)
@@ -41,37 +35,44 @@ const Search = ({navigation}) => {
 
     const newSearchBusinesses = () => {
         pageNumber = 0;
+        console.log("fdfd")
         searchBusinesses(latitude, longitude, searchTerm, searchDistance, selectedCategories, pageSize, 0).then(
             results => {
+                console.log(results)
                 setFoundBusinesses(results.businesses);
+                navigateToMap(results.businesses);
             }
         )
     }
 
     const findPosition = async () => {
+        setIsPositionLoading(true);
         let { status } = await Location.requestForegroundPermissionsAsync();
-        console.log(status)
+
         if (status !== 'granted') {
-          setErrorMsg('Permission to access location was denied');
+          setErrorMsg('Accès au GPS non autorisé.');
           setIsPositionFound(false);
-          console.log("Impossible de trouver la position")
+          setIsPositionLoading(false);
           return;
         }
-  
-        let location = await Location.getCurrentPositionAsync({});
+        
+        let timer = setTimeout(() => {
+            setErrorMsg('Impossible d\'accéder à votre position.');
+            setIsPositionFound(false);
+        }, POSITION_FIND_TIMEOUT);
+
+        let location = await Location.getCurrentPositionAsync({
+            timeout: POSITION_FIND_TIMEOUT
+        });
+
+        clearTimeout(timer);
+
         setLatitude(location.coords.latitude);
         setLongitude(location.coords.longitude);
+        console.log("testset location", location)
         setIsPositionFound(true);
+        setIsPositionLoading(false);
       }
-
-    const moreBusinessSearch = () => {
-        pageNumber = pageNumber + 1;
-        searchBusinesses(latitude, longitude, searchTerm, searchDistance, selectedCategories, pageSize, pageNumber*pageSize).then(
-            results => {
-                setFoundBusinesses([...foundBusinesses, results.businesses]);
-            }
-        )
-    }
 
     const onSelectedCategoriesChange = (selectedCategories) => {
         setSelectedCategories(selectedCategories);
@@ -83,20 +84,38 @@ const Search = ({navigation}) => {
         setSearchDistance(value);
     }
 
-    const navigateToMap = () => {
-        console.log("navig ", foundBusinesses)
+    const navigateToMap = (businesses) => {
+        console.log("navig vers map")
         navigation.navigate('SearchMap', {
-            businessesProp: foundBusinesses, 
+            businessesProp: businesses, 
             latitudeProp: latitude,
             longitudeProp: longitude, 
             searchTermProp: searchTerm,
             searchDistanceProp: searchDistance,
-            selectedCategories: selectedCategories
+            selectedCategories: selectedCategories,
+            navigation: navigation
         })
     }
 
     return (
         <View style={styles.container}>
+            {isPositionLoading && (
+                <View
+                    style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    position: 'absolute',
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                    zIndex: 999,
+                    }}>
+                    <ActivityIndicator size="large" color="#f00" />
+                </View>
+            )}
             <View style={styles.searchContainer}>
                 <TextInput
                     placeholder="Que souhaitez-vous découvrir ?"
@@ -138,25 +157,9 @@ const Search = ({navigation}) => {
                     title="Rechercher"
                     onPress={newSearchBusinesses}
                 />
-                
-            </View>
-
-            <View>
-                <Button
-                    title="Voir la carte"
-                    onPress={navigateToMap}
-                />
-                { !isError &&
-                    <FlatList
-                        data={foundBusinesses}
-                        keyExtractor={(item) => item.id}
-                        renderItem={({ item }) => (
-                            <BusinessListItem navigation={navigation} business={item}
-                            />
-                        )}
-                        refreshing={isRefreshing}
-                        onRefresh={newSearchBusinesses}
-                    />
+                {
+                    !isPositionFound && !isPositionLoading &&
+                    <Text style={styles.positionNotFoundError}>La recherche est impossible. ({errorMsg})</Text>
                 }
             </View>
         </View>
@@ -189,5 +192,5 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: 'bold',
         marginTop: 15
-    }
+    },
   });
