@@ -19,14 +19,17 @@ const BusinessListItem = ({business}) => {
                     {business.name}
                 </Text>
                 <Text style={styles.businessLocation}>
-                    {business.location?.city} ({ business.distance >= 1000 ? `${(business.distance / 1000).toFixed(2)}km` : `${Math.floor(business.distance)}m`})
+                    {business.location?.city} 
+                    { business.distance !== undefined &&
+                    <Text> ({ business.distance >= 1000 ? `${(business.distance / 1000).toFixed(2)}km` : `${Math.floor(business.distance)}m`}) </Text>
+                    }
                 </Text>
                 {
-                    business.is_closed &&
+                    business.is_closed !== undefined && business.is_closed &&
                     <Text style={styles.closedText}>Fermé</Text>
                 }
                 {
-                    !business.is_closed &&
+                    business.is_closed !== undefined && !business.is_closed &&
                     <Text style={styles.openedText}>Ouvert</Text>
                 }
             </View>

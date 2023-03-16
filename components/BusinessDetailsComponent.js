@@ -50,15 +50,16 @@ const BusinessDetails = ({route}) => {
     };
 
     const phoneCall = () => {
-      if (business.phone) {
-        Alert.alert(`Faire un appel à ${business.name}`, `Numéro: ${business.phone}`, [
+      const phoneNumber = business.phone ? business.phone : business.display_phone;
+      if (phoneNumber) {
+        Alert.alert(`Faire un appel à ${business.name}`, `Numéro: ${phoneNumber}`, [
             {
                 text: 'Retour',
                 style: 'cancel',
             }, {
                 text: 'Oui', 
                 onPress: () => {
-                  Linking.openURL(`tel:${business.phone}`)
+                  Linking.openURL(`tel:${phoneNumber}`)
                 }
             },
         ]);
@@ -105,13 +106,20 @@ const BusinessDetails = ({route}) => {
               </View>
             </View>
             <View style={styles.containerCardBottom}>
-              <TouchableOpacity activeOpacity = { .5 } onPress={phoneCall}>
-                <Text>Tel: <Text style={styles.phoneNumber}>{business.display_phone}</Text></Text>
-              </TouchableOpacity>
+              {
+                !business.phone && !business.display_phone && 
+                <Text>Numéro non fourni.</Text>
+              }
+              {
+                (business.phone || business.display_phone) && 
+                <TouchableOpacity activeOpacity = { .5 } onPress={phoneCall}>
+                  <Text>Tel: <Text style={styles.phoneNumber}>{business.display_phone ? business.display_phone : business.phone}</Text></Text>
+                </TouchableOpacity>
+              }
             </View>
             <View style={styles.containerCardBottom}>
               <TouchableOpacity activeOpacity = { .5 } onPress={maps}>
-                { business.distance !== undefined &&<Text>À {Math.round(business.distance)} mètres.</Text> }
+                { business.distance !== undefined &&<Text>À { business.distance >= 1000 ? `${(business.distance / 1000).toFixed(2)} kilomètres` : `${Math.floor(business.distance)} mètres`}</Text> }
                 <Text>{business.location.display_address.join(", ")}</Text>
               </TouchableOpacity>
             </View>
