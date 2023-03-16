@@ -174,8 +174,7 @@ export default Search;
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      alignContent: 'center',
-      backgroundColor: '#FEFFBE'
+      alignContent: 'center'
     },
     searchContainer: {
     paddingHorizontal: 12,
