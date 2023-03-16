@@ -34,7 +34,6 @@ async function searchBusinesses(latitude, longitude, term, radius, categories, l
         const offsetParam = (offset != null) ? `&offset=${offset}` : "";
 
         const categoriesParam = (categories != null && categories.length > 0) ? categories.map(category => `&categories=${category}`).join('') : ""
-        console.log('raidusPram = ' + radiusParam)
         console.log('Requête : ' + `${BASE_URL}/businesses/search?locale=fr_FR&latitude=${latitude}&longitude=${longitude}${categoriesParam}${searchTermParam}${radiusParam}${limitParam}${offsetParam}`)
         const result = await fetch(
             `${BASE_URL}/businesses/search?locale=fr_FR&latitude=${latitude}&longitude=${longitude}${categoriesParam}${searchTermParam}${radiusParam}${limitParam}${offsetParam}`, 
