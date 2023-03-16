@@ -1,38 +1,30 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, Button, StyleSheet, FlatList } from "react-native"
+import { View, Text, TextInput, Button, StyleSheet, ActivityIndicator } from "react-native"
 import { getAllCategories, searchBusinesses } from "../api/yelpAPI";
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 import NumericInput from 'react-native-numeric-input'
-import BusinessListItem from "./BusinessListItemComponent";
 import * as Location from 'expo-location';
+import { TouchableOpacity } from "react-native-gesture-handler";
+
+const POSITION_FIND_TIMEOUT = 5000; //5 seconds
 
 const Search = ({navigation}) => {
     const [allCategories, setAllCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
-    const [searchDistance, setSearchDistance] = useState(1000);
+    const [searchDistance, setSearchDistance] = useState(0.5);
     
     const [latitude, setLatitude] = useState();
     const [longitude, setLongitude] = useState();
     const [isPositionFound, setIsPositionFound] = useState(false);
+    const [isPositionLoading, setIsPositionLoading] = useState(true);
 
-    const [foundBusinesses, setFoundBusinesses] = useState([]);
-    const [isRefreshing, setIsRefreshing] = useState(false);
-    const [isError, setIsError] = useState(false);
+    const [errorMsg, setErrorMsg] = useState("");
 
-    let pageNumber = 0;
     const pageSize = 20;
 
     useEffect(() => {
-        /*searchBusinesses('49.117340', '6.177030', null, 500, null, null, null, 20, null).then(
-            businesses => {
-                console.log("a")
-                //rrsetFoundBusinesses([...foundBusinesses, ...businesses.businesses])
-                //console.log(businesses);
-            }
-
-        );*/
         findPosition();
         getAllCategories().then(result => {
             setAllCategories(result.categories)
@@ -40,63 +32,79 @@ const Search = ({navigation}) => {
     },[]);
 
     const newSearchBusinesses = () => {
-        pageNumber = 0;
-        searchBusinesses(latitude, longitude, searchTerm, searchDistance, selectedCategories, pageSize, 0).then(
-            results => {
-                setFoundBusinesses(results.businesses);
-            }
-        )
+        navigateToMap();
     }
 
     const findPosition = async () => {
+        setIsPositionLoading(true);
         let { status } = await Location.requestForegroundPermissionsAsync();
-        console.log(status)
+
         if (status !== 'granted') {
-          setErrorMsg('Permission to access location was denied');
+          setErrorMsg('Accès au GPS non autorisé.');
           setIsPositionFound(false);
-          console.log("Impossible de trouver la position")
+          setIsPositionLoading(false);
           return;
         }
-  
-        let location = await Location.getCurrentPositionAsync({});
+        
+        let timer = setTimeout(() => {
+            setErrorMsg('Impossible d\'accéder à votre position.');
+            setIsPositionFound(false);
+        }, POSITION_FIND_TIMEOUT);
+
+        let location = await Location.getCurrentPositionAsync({
+            timeout: POSITION_FIND_TIMEOUT
+        });
+
+        clearTimeout(timer);
+
         setLatitude(location.coords.latitude);
         setLongitude(location.coords.longitude);
         setIsPositionFound(true);
+        setIsPositionLoading(false);
       }
-
-    const moreBusinessSearch = () => {
-        pageNumber = pageNumber + 1;
-        searchBusinesses(latitude, longitude, searchTerm, searchDistance, selectedCategories, pageSize, pageNumber*pageSize).then(
-            results => {
-                setFoundBusinesses([...foundBusinesses, results.businesses]);
-            }
-        )
-    }
 
     const onSelectedCategoriesChange = (selectedCategories) => {
         setSelectedCategories(selectedCategories);
     }
 
     const onDistanceChange = (value) => {
-        if (value > 40000)
-          value = 40000;
+        if (value > 40)
+          value = 40;
         setSearchDistance(value);
     }
 
     const navigateToMap = () => {
-        console.log("navig ", foundBusinesses)
         navigation.navigate('SearchMap', {
-            businessesProp: foundBusinesses, 
             latitudeProp: latitude,
             longitudeProp: longitude, 
             searchTermProp: searchTerm,
-            searchDistanceProp: searchDistance,
+            searchDistanceProp: searchDistance * 1000,
             selectedCategories: selectedCategories
         })
     }
 
     return (
         <View style={styles.container}>
+            {isPositionLoading && (
+                <View
+                    style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    position: 'absolute',
+                    top: 0,
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                    zIndex: 999,
+                    }}>
+                    <ActivityIndicator size="large" color="#f00" />
+                </View>
+            )}
+            <View style={{alignItems: 'center', padding: 20, borderBottomWidth: 1, marginLeft: 15, marginRight: 15, marginBottom: 15}}>
+                <Text style={{fontSize: 30, fontWeight: 'bold'}}>Découvrir les environs</Text>
+            </View>
             <View style={styles.searchContainer}>
                 <TextInput
                     placeholder="Que souhaitez-vous découvrir ?"
@@ -123,40 +131,38 @@ const Search = ({navigation}) => {
                 <View>
                     <Text>Autour de moi</Text>
                 </View>
-                <Text style={styles.searchFieldTitle}>Distance (maximum 40000 mètres)</Text>
-                <View style={styles.distanceContainer}>
-                    <NumericInput 
-                        value={searchDistance} 
-                        onChange={onDistanceChange}
-                        step={1}
-                        maxValue={40000}
-                    />
-                    <Text> mètres</Text>
+                <View style={styles.searchDistanceContainer}>
+                    <Text style={[styles.searchFieldTitle, {flex: 1.1}]}>Dans un rayon de : </Text>
+                    <View style={[styles.distanceContainer, {flex: 1}]}>
+                        <NumericInput 
+                            type="up-down"
+                            step={0.1}
+                            style={styles.distanceInput}
+                            value={searchDistance} 
+                            onChange={onDistanceChange}
+                            valueType='real'
+                            minValue={0}
+                            totalHeight={30}
+                            upDownButtonsBackgroundColor='#472836'
+                            borderColor='black'
+                            totalWidth={100}
+                        />
+                        <Text style={{fontSize: 20}}> km</Text>
+                    </View>
                 </View>
-                <Button
+                <TouchableOpacity
+                    style={styles.searchButton}
                     disabled={!isPositionFound}
-                    title="Rechercher"
                     onPress={newSearchBusinesses}
-                />
-                
-            </View>
-
-            <View>
-                <Button
-                    title="Voir la carte"
-                    onPress={navigateToMap}
-                />
-                { !isError &&
-                    <FlatList
-                        data={foundBusinesses}
-                        keyExtractor={(item) => item.id}
-                        renderItem={({ item }) => (
-                            <BusinessListItem navigation={navigation} business={item}
-                            />
-                        )}
-                        refreshing={isRefreshing}
-                        onRefresh={newSearchBusinesses}
-                    />
+                >
+                    <Text style={styles.searchButtonText}>Allons-y !</Text>
+                </TouchableOpacity>
+                {
+                    !isPositionFound && !isPositionLoading &&
+                    <View>
+                    <Text style={styles.positionNotFoundError}>La recherche est impossible. ({errorMsg})</Text>
+                    <Button title="Réessayer" onPress={findPosition}/>
+                    </View>
                 }
             </View>
         </View>
@@ -168,14 +174,19 @@ export default Search;
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      marginTop: 60
+      alignContent: 'center',
+      backgroundColor: '#FEFFBE'
     },
     searchContainer: {
-        paddingHorizontal: 12,
+    paddingHorizontal: 12,
       marginBottom: 16,
     },
     inputSearchTerm: {
       marginBottom: 16,
+      padding: 10,
+      borderColor: 'black',
+      borderWidth: 1,
+      borderRadius: 50
     },
     noResult: {
       width: 336,
@@ -186,8 +197,25 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     searchFieldTitle: {
-        fontSize: 20,
+        fontSize: 22,
+        fontWeight: 'bold'
+    },
+    searchButton:{
+        padding: 30,
+        borderRadius: 5,
+        margin: 50,
+        backgroundColor: '#385753',
+        alignItems: 'center',
+      justifyContent: 'center'
+    },
+    searchButtonText: {
         fontWeight: 'bold',
-        marginTop: 15
+        fontSize: 22
+    },
+    searchDistanceContainer: {
+        flexDirection: 'row',  
+        alignItems: 'center', 
+        justifyContent: 'space-between',
+        marginTop: 20
     }
   });

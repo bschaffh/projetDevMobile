@@ -10,18 +10,13 @@ const FavedBusinesses = ({navigation}) => {
     const savedBusinesses = useSelector((state) => state.savedBusinesses.businesses)
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        console.log("----------------------" + savedBusinesses);
-        dispatch(clearSavedBusinesses());
-    }, []);
-
     return (
         <View style={styles.container}>
             <Text>Lieux enregistrées</Text>
             <FlatList
                 data={savedBusinesses}
                 renderItem={({ item }) => 
-                    <BusinessListItem navigation={navigation} business={item}keyExtractor={(item) => item.id}></BusinessListItem>
+                    <BusinessListItem business={item}keyExtractor={(item) => item.id}></BusinessListItem>
                 }
             />
             <Button onPress={() => {}} title="Vider"/>
