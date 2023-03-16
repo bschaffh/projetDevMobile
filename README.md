@@ -55,9 +55,6 @@ Cette API est gratuite et nous fournit les catégories de lieux d'intérêts ain
 - Pour la page de recherche, nous avons utilisé des librairies existantes afin de simplifier les d'input : 
     * [react-native-numeric-input](https://www.npmjs.com/package/react-native-numeric-input)
     * [react-native-sectioned-multi-select](https://github.com/renrizzolo/react-native-sectioned-multi-select)
-## Remarques
-
-Pour la 
 
 
 
