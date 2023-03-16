@@ -49,7 +49,7 @@ const BusinessesMap = ({route}) => {
       setIsFlatListShown(!isFlatListShown);
     };
 
-    const test = async (e) => {
+    const regionChangeCompleteHandle = async (e) => {
       setCurrentPosition(e);
       const newSearchDistance = (e.latitudeDelta * 111.045) * 1000;
       setSearchDistance(Math.min(newSearchDistance, 40000));
@@ -65,7 +65,7 @@ const BusinessesMap = ({route}) => {
             showsUserLocation={true}
             showsPointsOfInterest={false}
             customMapStyle={mapStyle}
-            onRegionChangeComplete={test}
+            onRegionChangeComplete={regionChangeCompleteHandle}
           >
               {
                   foundBusinesses?.map(business => (
