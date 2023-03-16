@@ -6,8 +6,11 @@ import BusinessListItem from "./BusinessListItemComponent";
 import { Feather } from "expo-vector-icons";
 import mapStyle from "../definitions/mapStyle";
 import distanceInKmBetweenEarthCoordinates from "../shared/mathsUtils";
+import { useNavigation } from "@react-navigation/native";
 
-const BusinessesMap = ({route}) => {
+const BusinessesMap = ({route, navigation}) => {
+  const navitation = useNavigation()
+
     const myLatitude = route.params.latitudeProp;
     const myLongitude = route.params.longitudeProp;
 
@@ -27,6 +30,7 @@ const BusinessesMap = ({route}) => {
 
     useEffect(() => {
       newSearchBusinesses();
+      console.log("searchDistance = ", searchDistance)
     }, []);
 
     const newSearchBusinesses = (latitude = null, longitude = null, newSearchDistance = null) => {
@@ -87,6 +91,12 @@ const BusinessesMap = ({route}) => {
       newSearchBusinesses(e.latitude, e.longitude, newSearchDistance);
     }
 
+    const navigateToDetails = (business) => {
+      navigation.navigate('BusinessDetails', {
+        business: business
+    })
+    }
+
     return (
       <View style={styles.container}>
           <MapView style={[styles.map, { height: isFlatListShown ? '50%' : '100%' }]}
@@ -101,13 +111,23 @@ const BusinessesMap = ({route}) => {
               {
                   foundBusinesses?.map(business => (
                     <Marker 
-                    key={business.id}
+                      key={business.id}
                       title={business.name} 
                       pinColor="red" 
-                      coordinate={{latitude: business.coordinates.latitude,longitude: business.coordinates.longitude}}>
-                        <Callout>
+                      coordinate={{latitude: business.coordinates.latitude,longitude: business.coordinates.longitude}}
+                    >
+                        <Callout onPress={() => navigateToDetails(business)}>
                             <View>
-                              <Text style={styles.redText}>{business.distance}</Text>
+                              <Text style={{fontWeight: 'bold', fontSize: 20}}>{business.name}</Text>
+                              <Text style={{fontStyle: 'italic', fontSize: 12}}>{ business.distance >= 1000 ? `${(business.distance / 1000).toFixed(2)}km` : `${Math.floor(business.distance)}m`}</Text>
+                              {
+                                  business.is_closed &&
+                                  <Text style={{color :'red'}}>Fermé</Text>
+                              }
+                              {
+                                  !business.is_closed &&
+                                  <Text style={{color: 'green'}}>Ouvert</Text>
+                              }
                             </View>
                         </Callout>
                       </Marker>
@@ -170,22 +190,6 @@ const BusinessesMap = ({route}) => {
 }
 
 const styles = StyleSheet.create({
-    /*container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginLeft: 20,
-      marginRight: 20,
-      marginTop: 60
-    },
-    mapStyle: {
-      width: "100%",
-      height: "100%",
-    },
-    redText: {
-      color: "red",
-    }*/
     container: {
       flex: 1,
     },

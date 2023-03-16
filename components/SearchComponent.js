@@ -13,7 +13,7 @@ const Search = ({navigation}) => {
     const [allCategories, setAllCategories] = useState([]);
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
-    const [searchDistance, setSearchDistance] = useState(1000);
+    const [searchDistance, setSearchDistance] = useState(0.5);
     
     const [latitude, setLatitude] = useState();
     const [longitude, setLongitude] = useState();
@@ -68,8 +68,8 @@ const Search = ({navigation}) => {
     }
 
     const onDistanceChange = (value) => {
-        if (value > 40000)
-          value = 40000;
+        if (value > 40)
+          value = 40;
         setSearchDistance(value);
     }
 
@@ -78,7 +78,7 @@ const Search = ({navigation}) => {
             latitudeProp: latitude,
             longitudeProp: longitude, 
             searchTermProp: searchTerm,
-            searchDistanceProp: searchDistance,
+            searchDistanceProp: searchDistance * 1000,
             selectedCategories: selectedCategories
         })
     }
@@ -102,6 +102,9 @@ const Search = ({navigation}) => {
                     <ActivityIndicator size="large" color="#f00" />
                 </View>
             )}
+            <View style={{alignItems: 'center', padding: 20, borderBottomWidth: 1, marginLeft: 15, marginRight: 15, marginBottom: 15}}>
+                <Text style={{fontSize: 30, fontWeight: 'bold'}}>Découvrir les environs</Text>
+            </View>
             <View style={styles.searchContainer}>
                 <TextInput
                     placeholder="Que souhaitez-vous découvrir ?"
@@ -128,22 +131,31 @@ const Search = ({navigation}) => {
                 <View>
                     <Text>Autour de moi</Text>
                 </View>
-                <Text style={styles.searchFieldTitle}>Distance (maximum 40000 mètres)</Text>
-                <View style={styles.distanceContainer}>
-                    <NumericInput 
-                        value={searchDistance} 
-                        onChange={onDistanceChange}
-                        step={1}
-                        maxValue={40000}
-                    />
-                    <Text> mètres</Text>
+                <View style={styles.searchDistanceContainer}>
+                    <Text style={[styles.searchFieldTitle, {flex: 1.1}]}>Dans un rayon de : </Text>
+                    <View style={[styles.distanceContainer, {flex: 1}]}>
+                        <NumericInput 
+                            type="up-down"
+                            step={0.1}
+                            style={styles.distanceInput}
+                            value={searchDistance} 
+                            onChange={onDistanceChange}
+                            valueType='real'
+                            minValue={0}
+                            totalHeight={30}
+                            upDownButtonsBackgroundColor='#472836'
+                            borderColor='black'
+                            totalWidth={100}
+                        />
+                        <Text style={{fontSize: 20}}> km</Text>
+                    </View>
                 </View>
                 <TouchableOpacity
                     style={styles.searchButton}
                     disabled={!isPositionFound}
                     onPress={newSearchBusinesses}
                 >
-                    <Text style={styles.searchButtonText}>Explorons !</Text>
+                    <Text style={styles.searchButtonText}>Allons-y !</Text>
                 </TouchableOpacity>
                 {
                     !isPositionFound && !isPositionLoading &&
@@ -163,6 +175,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       alignContent: 'center',
+      backgroundColor: '#FEFFBE'
     },
     searchContainer: {
     paddingHorizontal: 12,
@@ -184,20 +197,25 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     searchFieldTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginTop: 15
+        fontSize: 22,
+        fontWeight: 'bold'
     },
     searchButton:{
         padding: 30,
         borderRadius: 5,
         margin: 50,
-        backgroundColor: '#154c79',
+        backgroundColor: '#385753',
         alignItems: 'center',
       justifyContent: 'center'
     },
     searchButtonText: {
         fontWeight: 'bold',
         fontSize: 22
+    },
+    searchDistanceContainer: {
+        flexDirection: 'row',  
+        alignItems: 'center', 
+        justifyContent: 'space-between',
+        marginTop: 20
     }
   });
