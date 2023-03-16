@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text, FlatList, TouchableOpacity, Image } from "react-native";
+import { View, StyleSheet, Text, FlatList, TouchableOpacity, Image, ActivityIndicator } from "react-native";
 import MapView, { Marker, Callout } from "react-native-maps";
 import { searchBusinesses } from "../api/yelpAPI";
 import BusinessListItem from "./BusinessListItemComponent";
 import { Feather } from "expo-vector-icons";
 import mapStyle from "../definitions/mapStyle";
+import distanceInKmBetweenEarthCoordinates from "../shared/mathsUtils";
 
 const BusinessesMap = ({route}) => {
+    const myLatitude = route.params.latitudeProp;
+    const myLongitude = route.params.longitudeProp;
+
     const [foundBusinesses, setFoundBusinesses] = useState();
+    const [isLoadingBusinesses, setIsLoadingBusinesses] = useState(true);
     const [searchDistance, setSearchDistance] = useState(route.params.searchDistanceProp);
     const [isFlatListShown, setIsFlatListShown] = useState(true);
     const [pageNumber, setPageNumber] = useState(0);
@@ -16,7 +21,7 @@ const BusinessesMap = ({route}) => {
     const [currentPosition, setCurrentPosition] = useState({
       latitude: route.params.latitudeProp,
       longitude: route.params.longitudeProp,
-      latitudeDelta: (route.params.searchDistanceProp /1000) / 111.045,
+      latitudeDelta: (route.params.searchDistanceProp /1000) / 111.045, //Convertir le rayon de recherche en mètres pour avoir la valeur de latitudeDelta
       longitudeDelta: 0.0000001
     })
 
@@ -25,9 +30,23 @@ const BusinessesMap = ({route}) => {
     }, []);
 
     const newSearchBusinesses = (latitude = null, longitude = null, newSearchDistance = null) => {
+      setIsLoadingBusinesses(true);
       setPageNumber(0);
       searchBusinesses(latitude ?? currentPosition.latitude, longitude ?? currentPosition.longitude, route.params.searchTerm, newSearchDistance ?? searchDistance, route.params.selectedCategories, 20, 0).then(
           results => {
+              setIsLoadingBusinesses(false);
+              results.businesses.forEach(
+                business => {
+                  const d = distanceInKmBetweenEarthCoordinates(
+                    business.coordinates.latitude,  
+                    business.coordinates.longitude,
+                    myLatitude,
+                    myLongitude
+                  ) * 1000;
+                  business.distance = d
+                }
+
+              ); //Recalcul de la distance par rapport à la localisation réelle, et non celle au centre de la carte une fois le déplacement fait
               setFoundBusinesses(results.businesses);
               setTotalResult(results.total);
           }
@@ -39,7 +58,19 @@ const BusinessesMap = ({route}) => {
         setPageNumber(pageNumber + 1);
         searchBusinesses(currentPosition.latitude, currentPosition.longitude, route.params.searchTerm, searchDistance, route.params.selectedCategories, 20, (pageNumber + 1)*20).then(
             results => {
-                setFoundBusinesses(foundBusinesses.concat(results.businesses));
+                const newFoundBusinesses = foundBusinesses.concat(results.businesses);
+                newFoundBusinesses.forEach(
+                  business => {
+                      const d = distanceInKmBetweenEarthCoordinates(
+                      business.coordinates.latitude,  
+                      business.coordinates.longitude,
+                      myLatitude,
+                      myLongitude
+                    ) * 1000;
+                    business.distance = d
+                  }
+                );
+                setFoundBusinesses(newFoundBusinesses);
             }
         )
       }
@@ -51,7 +82,7 @@ const BusinessesMap = ({route}) => {
 
     const regionChangeCompleteHandle = async (e) => {
       setCurrentPosition(e);
-      const newSearchDistance = (e.latitudeDelta * 111.045) * 1000;
+      const newSearchDistance = (e.latitudeDelta * 111.045) * 1000; //convertir le nouveau latitudeDelta en rayon de recherche en mètres
       setSearchDistance(Math.min(newSearchDistance, 40000));
       newSearchBusinesses(e.latitude, e.longitude, newSearchDistance);
     }
@@ -90,6 +121,23 @@ const BusinessesMap = ({route}) => {
           )}
       {isFlatListShown && (
         <View style={[styles.flatListContainer, { height: '50%' }]}>
+            {isLoadingBusinesses && (
+            <View
+                style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                position: 'absolute',
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0,
+                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                zIndex: 999,
+                }}>
+                <ActivityIndicator size="large" color="#f00" />
+            </View>
+          )}
           { foundBusinesses?.length > 0 && 
             <FlatList
               data={foundBusinesses}
@@ -106,7 +154,7 @@ const BusinessesMap = ({route}) => {
           }
             
             {
-              foundBusinesses?.length == 0 && 
+              (foundBusinesses == null || foundBusinesses?.length == 0) && !isLoadingBusinesses &&
               <View style={styles.noResultContainer}>
                 <Image resizeMode="stretch" source={require('../assets/sad.png')} style={styles.sadFace}/>
                 <Text style={styles.noResult}>Aucun résultat. Réessayez.</Text>

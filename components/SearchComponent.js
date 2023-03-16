@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, Button, StyleSheet, FlatList, ActivityIndicator } from "react-native"
+import { View, Text, TextInput, Button, StyleSheet, ActivityIndicator } from "react-native"
 import { getAllCategories, searchBusinesses } from "../api/yelpAPI";
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 import NumericInput from 'react-native-numeric-input'
-import BusinessListItem from "./BusinessListItemComponent";
 import * as Location from 'expo-location';
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const POSITION_FIND_TIMEOUT = 5000; //5 seconds
 
@@ -20,8 +20,6 @@ const Search = ({navigation}) => {
     const [isPositionFound, setIsPositionFound] = useState(false);
     const [isPositionLoading, setIsPositionLoading] = useState(true);
 
-    const [isRefreshing, setIsRefreshing] = useState(false);
-    const [foundBusinesses, setFoundBusinesses] = useState([]);
     const [errorMsg, setErrorMsg] = useState("");
 
     const pageSize = 20;
@@ -34,13 +32,7 @@ const Search = ({navigation}) => {
     },[]);
 
     const newSearchBusinesses = () => {
-        pageNumber = 0;
-        searchBusinesses(latitude, longitude, searchTerm, searchDistance, selectedCategories, pageSize, 0).then(
-            results => {
-                setFoundBusinesses(results.businesses);
-                navigateToMap(results.businesses);
-            }
-        )
+        navigateToMap();
     }
 
     const findPosition = async () => {
@@ -81,9 +73,8 @@ const Search = ({navigation}) => {
         setSearchDistance(value);
     }
 
-    const navigateToMap = (businesses) => {
+    const navigateToMap = () => {
         navigation.navigate('SearchMap', {
-            businessesProp: businesses, 
             latitudeProp: latitude,
             longitudeProp: longitude, 
             searchTermProp: searchTerm,
@@ -147,14 +138,19 @@ const Search = ({navigation}) => {
                     />
                     <Text> mètres</Text>
                 </View>
-                <Button
+                <TouchableOpacity
+                    style={styles.searchButton}
                     disabled={!isPositionFound}
-                    title="Rechercher"
                     onPress={newSearchBusinesses}
-                />
+                >
+                    <Text style={styles.searchButtonText}>Explorons !</Text>
+                </TouchableOpacity>
                 {
                     !isPositionFound && !isPositionLoading &&
+                    <View>
                     <Text style={styles.positionNotFoundError}>La recherche est impossible. ({errorMsg})</Text>
+                    <Button title="Réessayer" onPress={findPosition}/>
+                    </View>
                 }
             </View>
         </View>
@@ -166,14 +162,18 @@ export default Search;
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      marginTop: 60
+      alignContent: 'center',
     },
     searchContainer: {
-        paddingHorizontal: 12,
+    paddingHorizontal: 12,
       marginBottom: 16,
     },
     inputSearchTerm: {
       marginBottom: 16,
+      padding: 10,
+      borderColor: 'black',
+      borderWidth: 1,
+      borderRadius: 50
     },
     noResult: {
       width: 336,
@@ -188,4 +188,16 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginTop: 15
     },
+    searchButton:{
+        padding: 30,
+        borderRadius: 5,
+        margin: 50,
+        backgroundColor: '#154c79',
+        alignItems: 'center',
+      justifyContent: 'center'
+    },
+    searchButtonText: {
+        fontWeight: 'bold',
+        fontSize: 22
+    }
   });
