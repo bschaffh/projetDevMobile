@@ -58,6 +58,7 @@ const BusinessesMap = ({route, navigation}) => {
 
     const moreSearchBusinesses = () => {
       if (foundBusinesses.length < totalResult){
+        setIsLoadingBusinesses(true);
         setPageNumber(pageNumber + 1);
         searchBusinesses(currentPosition.latitude, currentPosition.longitude, route.params.searchTerm, searchDistance, route.params.selectedCategories, 30, (pageNumber + 1)*30).then(
             results => {
@@ -73,7 +74,8 @@ const BusinessesMap = ({route, navigation}) => {
                     business.distance = d
                   }
                 );
-                setFoundBusinesses(newFoundBusinesses);
+                setFoundBusinesses([... new Set(newFoundBusinesses)]);
+                setIsLoadingBusinesses(false);
             }
         )
       }

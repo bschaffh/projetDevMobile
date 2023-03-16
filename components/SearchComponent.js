@@ -102,8 +102,8 @@ const Search = ({navigation}) => {
                     <ActivityIndicator size="large" color="#f00" />
                 </View>
             )}
-            <View style={{alignItems: 'center', padding: 20, borderBottomWidth: 1, marginLeft: 15, marginRight: 15, marginBottom: 15}}>
-                <Text style={{fontSize: 30, fontWeight: 'bold'}}>Découvrir les environs</Text>
+            <View style={{alignItems: 'center', padding: 12, borderBottomWidth: 1, marginLeft: 15, marginRight: 15, marginBottom: 8}}>
+                <Text style={{fontSize: 26, fontWeight: 'bold'}}>Découvrir les environs</Text>
             </View>
             <View style={styles.searchContainer}>
                 <TextInput
@@ -142,10 +142,10 @@ const Search = ({navigation}) => {
                             onChange={onDistanceChange}
                             valueType='real'
                             minValue={0}
-                            totalHeight={30}
+                            totalHeight={40}
                             upDownButtonsBackgroundColor='#472836'
                             borderColor='black'
-                            totalWidth={100}
+                            totalWidth={110}
                         />
                         <Text style={{fontSize: 20}}> km</Text>
                     </View>
@@ -181,7 +181,6 @@ const styles = StyleSheet.create({
       marginBottom: 16,
     },
     inputSearchTerm: {
-      marginBottom: 16,
       padding: 10,
       borderColor: 'black',
       borderWidth: 1,
@@ -200,12 +199,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     searchButton:{
-        padding: 30,
+        padding: 20,
         borderRadius: 5,
-        margin: 50,
+        margin: 20,
         backgroundColor: '#385753',
         alignItems: 'center',
-      justifyContent: 'center'
+        justifyContent: 'center'
     },
     searchButtonText: {
         fontWeight: 'bold',
