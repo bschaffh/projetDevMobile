@@ -143,7 +143,7 @@ const Search = ({navigation}) => {
                             valueType='real'
                             minValue={0}
                             totalHeight={40}
-                            upDownButtonsBackgroundColor='#472836'
+                            upDownButtonsBackgroundColor='#E56B70'
                             borderColor='black'
                             totalWidth={110}
                         />
