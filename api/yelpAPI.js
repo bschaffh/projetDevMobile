@@ -38,10 +38,7 @@ async function searchBusinesses(latitude, longitude, term, radius, categories, l
         const result = await fetch(
             `${BASE_URL}/businesses/search?locale=fr_FR&latitude=${latitude}&longitude=${longitude}${categoriesParam}${searchTermParam}${radiusParam}${limitParam}${offsetParam}`, 
             options);
-            console.log("w")
-            console.log(`${BASE_URL}/businesses/search?locale=fr_FR&latitude=${latitude}&longitude=${longitude}${categoriesParam}${searchTermParam}${radiusParam}${limitParam}${offsetParam}`)
         const data = await result.json();
-        console.log("w")
         return data;
     }
     catch(error){

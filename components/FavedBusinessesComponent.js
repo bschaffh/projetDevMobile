@@ -10,11 +10,6 @@ const FavedBusinesses = ({navigation}) => {
     const savedBusinesses = useSelector((state) => state.savedBusinesses.businesses)
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        console.log("----------------------" + savedBusinesses);
-        dispatch(clearSavedBusinesses());
-    }, []);
-
     return (
         <View style={styles.container}>
             <Text>Lieux enregistrées</Text>

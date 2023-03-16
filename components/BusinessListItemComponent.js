@@ -3,12 +3,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { useState } from "react";
 
 const BusinessListItem = ({business, navigation}) => {
-    useEffect(() => {
-        console.log("affichage dela ville " + business.name);
-    }, []);
-
     const navigateToDetails = () => {
-        console.log("nav");
         navigation.navigate('BusinessDetails', {
             business: business
         })

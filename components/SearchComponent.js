@@ -35,10 +35,8 @@ const Search = ({navigation}) => {
 
     const newSearchBusinesses = () => {
         pageNumber = 0;
-        console.log("fdfd")
         searchBusinesses(latitude, longitude, searchTerm, searchDistance, selectedCategories, pageSize, 0).then(
             results => {
-                console.log(results)
                 setFoundBusinesses(results.businesses);
                 navigateToMap(results.businesses);
             }
@@ -69,7 +67,6 @@ const Search = ({navigation}) => {
 
         setLatitude(location.coords.latitude);
         setLongitude(location.coords.longitude);
-        console.log("testset location", location)
         setIsPositionFound(true);
         setIsPositionLoading(false);
       }
@@ -85,7 +82,6 @@ const Search = ({navigation}) => {
     }
 
     const navigateToMap = (businesses) => {
-        console.log("navig vers map")
         navigation.navigate('SearchMap', {
             businessesProp: businesses, 
             latitudeProp: latitude,

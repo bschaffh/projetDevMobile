@@ -24,8 +24,6 @@ const BusinessesMap = ({route}) => {
     })
 
     useEffect(() => {
-      console.log('distnace = ', searchDistance);
-      console.log('latitudeDelta = ', currentPosition.latitudeDelta)
       newSearchBusinesses();
     }, []);
 
