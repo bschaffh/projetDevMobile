@@ -1,4 +1,5 @@
 import React from "react";
+import { Image } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
@@ -6,6 +7,7 @@ import BusinessesMap from "../components/BusinessesMapComponent";
 import FavedBusinesses from "../components/FavedBusinessesComponent";
 import Search from "../components/SearchComponent";
 import BusinessDetails from "../components/BusinessDetailsComponent";
+import Assets from "../definitions/Assets";
 
 const DefaultNavigation = createStackNavigator();
 const FavedBusinessesNavigation = createStackNavigator();
@@ -29,7 +31,7 @@ function SearchStack() {
       <SearchNavigation.Screen
         name="BusinessDetails"
         component={BusinessDetails}
-        options={{title: "Détails"}}
+        options={{title: "Détails du lieu"}}
       />
     </SearchNavigation.Navigator>
   );
@@ -42,12 +44,12 @@ function FavedStack() {
       <FavedBusinessesNavigation.Screen 
         name="FavedBusinessesList"
         component={FavedBusinesses}
-        options={{title: "Favoris"}}
+        options={{title: "Lieux favoris"}}
       />
       <FavedBusinessesNavigation.Screen
         name="BusinessDetails"
         component={BusinessDetails}
-        options={{title: "Détails"}}
+        options={{title: "Détails du lieu"}}
       />
     </FavedBusinessesNavigation.Navigator>
   );
@@ -62,10 +64,24 @@ function RootStack() {
       <TabNavigation.Screen
         name="Recherche"
         component={SearchStack}
+        options={() => ({
+          tabBarIcon: ({ color }) => {
+            return (
+              <Image source={Assets.icons.search} style={{ tintColor: color, flex: 1, width:25, height:25, resizeMode: 'contain' }} />
+            );
+          },
+        })}
       />
       <TabNavigation.Screen
         name="Favoris"
         component={FavedStack}
+        options={() => ({
+          tabBarIcon: ({ color }) => {
+            return (
+              <Image source={Assets.icons.heartFull} style={{ tintColor: color, flex: 1, width:25, height:25, resizeMode: 'contain' }} />
+            );
+          },
+        })}
       />
     </TabNavigation.Navigator>
   );

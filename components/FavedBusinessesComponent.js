@@ -1,6 +1,6 @@
 import React from "react"
 import { useEffect } from "react"
-import { Button, StyleSheet, Text, View } from "react-native"
+import { Button, StyleSheet, Text, View, Alert } from "react-native"
 import { FlatList } from "react-native-gesture-handler"
 import { useDispatch, useSelector } from "react-redux"
 import { clearSavedBusinesses, saveBusiness } from "../store/reducers/savedBusinesses"
@@ -10,18 +10,27 @@ const FavedBusinesses = ({navigation}) => {
     const savedBusinesses = useSelector((state) => state.savedBusinesses.businesses)
     const dispatch = useDispatch();
 
+    const clearSavedBusinessesButton = () => {
+        Alert.alert('Retirer tout les favoris', 'Êtes vous sûr ?', [
+            {
+                text: 'Retour',
+                style: 'cancel',
+            }, {
+                text: 'Oui', 
+                onPress: () => dispatch(clearSavedBusinesses())
+            },
+        ]);
+    };
+
     return (
         <View style={styles.container}>
-            <Text>Lieux enregistrées</Text>
             <FlatList
-                data={savedBusinesses}
+                data={Object.keys(savedBusinesses)}
                 renderItem={({ item }) => 
-                    <BusinessListItem business={item}keyExtractor={(item) => item.id}></BusinessListItem>
+                    <BusinessListItem navigation={navigation} business={savedBusinesses[item]} keyExtractor={(item) => item}></BusinessListItem>
                 }
             />
-            <Button onPress={() => {}} title="Vider"/>
-            <Button onPress={() => {}} title="Ajouter un lieu"/>
-
+            <Button onPress={clearSavedBusinessesButton} title="Vider"/>
         </View>
     )
 }
@@ -30,7 +39,6 @@ export default FavedBusinesses;
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        marginTop: 50
+        flex: 1
     }
 })

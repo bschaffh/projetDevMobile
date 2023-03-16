@@ -1,9 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
+import Toast from 'react-native-root-toast';
 
 const initialState = {
-    businesses : [
-        {id: 'wdzqdzq', name: 'fav1'}
-    ]
+    businesses: {}
 };
 
 const savedBusinessesSlice = createSlice({
@@ -11,13 +10,30 @@ const savedBusinessesSlice = createSlice({
     initialState: initialState,
     reducers: {
         saveBusiness(state, action){
-            state.businesses.push(action.payload);
+            delete action.payload.is_closed; // will not always stay the same
+            state.businesses[action.payload.id] = action.payload;
+            Toast.show(`${action.payload.name} a été ajouté favoris.`, {
+                duration: Toast.durations.SHORT,
+                position: Toast.positions.BOTTOM,
+                hideOnPress: true,
+            });
         },
         unSaveBusinessById(state, action){
-            state.businesses = state.businesses.filter((id) => id !== action.payload);
+            let name = state.businesses[action.payload].name;
+            delete state.businesses[action.payload];
+            Toast.show(`${name} a été retiré des favoris.`, {
+                duration: Toast.durations.SHORT,
+                position: Toast.positions.BOTTOM,
+                hideOnPress: true,
+            });
         },
         clearSavedBusinesses(state){
-            state.businesses = [];
+            state.businesses = {};
+            Toast.show("Tous les lieux ont été retiré des favoris.", {
+                duration: Toast.durations.SHORT,
+                position: Toast.positions.BOTTOM,
+                hideOnPress: true,
+            });
         }
     }
 })
