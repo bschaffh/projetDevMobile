@@ -16,7 +16,7 @@ const FavedBusinesses = ({navigation}) => {
             <FlatList
                 data={savedBusinesses}
                 renderItem={({ item }) => 
-                    <BusinessListItem navigation={navigation} business={item}keyExtractor={(item) => item.id}></BusinessListItem>
+                    <BusinessListItem business={item}keyExtractor={(item) => item.id}></BusinessListItem>
                 }
             />
             <Button onPress={() => {}} title="Vider"/>

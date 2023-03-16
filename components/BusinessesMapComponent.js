@@ -5,7 +5,6 @@ import { searchBusinesses } from "../api/yelpAPI";
 import BusinessListItem from "./BusinessListItemComponent";
 import { Feather } from "expo-vector-icons";
 import mapStyle from "../definitions/mapStyle";
-import { CurrentRenderContext } from "@react-navigation/native";
 
 const BusinessesMap = ({route}) => {
     const [foundBusinesses, setFoundBusinesses] = useState();
@@ -13,8 +12,6 @@ const BusinessesMap = ({route}) => {
     const [isFlatListShown, setIsFlatListShown] = useState(true);
     const [pageNumber, setPageNumber] = useState(0);
     const [totalResult, setTotalResult] = useState(0);
-
-    const navigation = route.params.navigation;
 
     const [currentPosition, setCurrentPosition] = useState({
       latitude: route.params.latitudeProp,
@@ -98,7 +95,7 @@ const BusinessesMap = ({route}) => {
               data={foundBusinesses}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
-                  <BusinessListItem business={item} navigation={navigation}
+                  <BusinessListItem business={item}
                   />
               )}
               refreshing={false}

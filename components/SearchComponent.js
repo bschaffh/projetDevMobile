@@ -88,8 +88,7 @@ const Search = ({navigation}) => {
             longitudeProp: longitude, 
             searchTermProp: searchTerm,
             searchDistanceProp: searchDistance,
-            selectedCategories: selectedCategories,
-            navigation: navigation
+            selectedCategories: selectedCategories
         })
     }
 

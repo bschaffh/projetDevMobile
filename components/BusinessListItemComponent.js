@@ -1,9 +1,12 @@
 import React, { useEffect } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 
-const BusinessListItem = ({business, navigation}) => {
+const BusinessListItem = ({business}) => {
+    const navigation = useNavigation();
     const navigateToDetails = () => {
+        console.log("nav");
         navigation.navigate('BusinessDetails', {
             business: business
         })
