@@ -36,7 +36,7 @@ const BusinessesMap = ({route, navigation}) => {
     const newSearchBusinesses = (latitude = null, longitude = null, newSearchDistance = null) => {
       setIsLoadingBusinesses(true);
       setPageNumber(0);
-      searchBusinesses(latitude ?? currentPosition.latitude, longitude ?? currentPosition.longitude, route.params.searchTerm, newSearchDistance ?? searchDistance, route.params.selectedCategories, 20, 0).then(
+      searchBusinesses(latitude ?? currentPosition.latitude, longitude ?? currentPosition.longitude, route.params.searchTerm, newSearchDistance ?? searchDistance, route.params.selectedCategories, 30, 0).then(
           results => {
               setIsLoadingBusinesses(false);
               results?.businesses?.forEach(
@@ -60,7 +60,7 @@ const BusinessesMap = ({route, navigation}) => {
     const moreSearchBusinesses = () => {
       if (foundBusinesses.length < totalResult){
         setPageNumber(pageNumber + 1);
-        searchBusinesses(currentPosition.latitude, currentPosition.longitude, route.params.searchTerm, searchDistance, route.params.selectedCategories, 20, (pageNumber + 1)*20).then(
+        searchBusinesses(currentPosition.latitude, currentPosition.longitude, route.params.searchTerm, searchDistance, route.params.selectedCategories, 30, (pageNumber + 1)*30).then(
             results => {
                 const newFoundBusinesses = foundBusinesses.concat(results.businesses);
                 newFoundBusinesses.forEach(
@@ -101,9 +101,6 @@ const BusinessesMap = ({route, navigation}) => {
 
     const scrollToBusiness = (businessId) => {
       setIsFlatListShown(true);
-      console.log(foundBusinesses.map(b => b.id))
-      console.log(businessId)
-      console
       ref?.current?.scrollToIndex({
         animated: true,
         index: foundBusinesses.map(b => b.id).findIndex(id => id == businessId),

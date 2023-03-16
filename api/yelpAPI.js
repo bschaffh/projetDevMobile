@@ -30,7 +30,7 @@ async function searchBusinesses(latitude, longitude, term, radius, categories, l
     try{
         const searchTermParam = (term != null && term.length > 0) ? `&term=${term}`: "";
         const radiusParam = (radius != null) ? `&radius=${Math.floor(radius)}` : "";
-        const limitParam = (limit != null) ? `&limit=${limit}` : "&limit=20";
+        const limitParam = (limit != null) ? `&limit=${limit}` : "&limit=30";
         const offsetParam = (offset != null) ? `&offset=${offset}` : "";
 
         const categoriesParam = (categories != null && categories.length > 0) ? categories.map(category => `&categories=${category}`).join('') : ""
