@@ -6,10 +6,10 @@ import BusinessListItem from "./BusinessListItemComponent";
 import { Feather } from "expo-vector-icons";
 import mapStyle from "../definitions/mapStyle";
 import distanceInKmBetweenEarthCoordinates from "../shared/mathsUtils";
-import { useNavigation } from "@react-navigation/native";
+import { useRef } from "react";
 
 const BusinessesMap = ({route, navigation}) => {
-  const navitation = useNavigation()
+  const ref = useRef();
 
     const myLatitude = route.params.latitudeProp;
     const myLongitude = route.params.longitudeProp;
@@ -39,7 +39,7 @@ const BusinessesMap = ({route, navigation}) => {
       searchBusinesses(latitude ?? currentPosition.latitude, longitude ?? currentPosition.longitude, route.params.searchTerm, newSearchDistance ?? searchDistance, route.params.selectedCategories, 20, 0).then(
           results => {
               setIsLoadingBusinesses(false);
-              results.businesses.forEach(
+              results?.businesses?.forEach(
                 business => {
                   const d = distanceInKmBetweenEarthCoordinates(
                     business.coordinates.latitude,  
@@ -84,17 +84,30 @@ const BusinessesMap = ({route, navigation}) => {
       setIsFlatListShown(!isFlatListShown);
     };
 
-    const regionChangeCompleteHandle = async (e) => {
-      setCurrentPosition(e);
-      const newSearchDistance = (e.latitudeDelta * 111.045) * 1000; //convertir le nouveau latitudeDelta en rayon de recherche en mètres
-      setSearchDistance(Math.min(newSearchDistance, 40000));
-      newSearchBusinesses(e.latitude, e.longitude, newSearchDistance);
+    const regionChangeCompleteHandle = async (e, gesture) => {
+      if (gesture.isGesture) {
+        setCurrentPosition(e);
+        const newSearchDistance = (e.latitudeDelta * 111.045) * 1000; //convertir le nouveau latitudeDelta en rayon de recherche en mètres
+        setSearchDistance(Math.min(newSearchDistance, 40000));
+        newSearchBusinesses(e.latitude, e.longitude, Math.min(newSearchDistance, 40000));
+      }
     }
 
     const navigateToDetails = (business) => {
       navigation.navigate('BusinessDetails', {
         business: business
-    })
+      })
+    }
+
+    const scrollToBusiness = (businessId) => {
+      setIsFlatListShown(true);
+      console.log(foundBusinesses.map(b => b.id))
+      console.log(businessId)
+      console
+      ref?.current?.scrollToIndex({
+        animated: true,
+        index: foundBusinesses.map(b => b.id).findIndex(id => id == businessId),
+    });
     }
 
     return (
@@ -115,6 +128,7 @@ const BusinessesMap = ({route, navigation}) => {
                       title={business.name} 
                       pinColor="red" 
                       coordinate={{latitude: business.coordinates.latitude,longitude: business.coordinates.longitude}}
+                      onPress={() => scrollToBusiness(business.id)}
                     >
                         <Callout onPress={() => navigateToDetails(business)}>
                             <View>
@@ -170,6 +184,7 @@ const BusinessesMap = ({route, navigation}) => {
               onRefresh={newSearchBusinesses}
               onEndReached={moreSearchBusinesses}
               onEndReachedThreshold={0.5}
+              ref={ref}
           />
           }
             

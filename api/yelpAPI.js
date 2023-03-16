@@ -29,11 +29,12 @@ const getAllCategories = async () => {
 async function searchBusinesses(latitude, longitude, term, radius, categories, limit, offset) {
     try{
         const searchTermParam = (term != null && term.length > 0) ? `&term=${term}`: "";
-        const radiusParam = (term != null) ? `&radius=${radius}` : "";
+        const radiusParam = (radius != null) ? `&radius=${Math.floor(radius)}` : "";
         const limitParam = (limit != null) ? `&limit=${limit}` : "&limit=20";
         const offsetParam = (offset != null) ? `&offset=${offset}` : "";
 
         const categoriesParam = (categories != null && categories.length > 0) ? categories.map(category => `&categories=${category}`).join('') : ""
+        console.log('raidusPram = ' + radiusParam)
         console.log('Requête : ' + `${BASE_URL}/businesses/search?locale=fr_FR&latitude=${latitude}&longitude=${longitude}${categoriesParam}${searchTermParam}${radiusParam}${limitParam}${offsetParam}`)
         const result = await fetch(
             `${BASE_URL}/businesses/search?locale=fr_FR&latitude=${latitude}&longitude=${longitude}${categoriesParam}${searchTermParam}${radiusParam}${limitParam}${offsetParam}`, 
