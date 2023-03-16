@@ -94,17 +94,17 @@ const BusinessDetails = ({route}) => {
 
       for (let i = 0; i < fullStarsNumber; i++)
         ratingStarsComponent.push(
-          <Image style={styles.starStyle} source={Assets.icons.filledStar}/>
+          <Image key={`fullStar${i}`} style={styles.starStyle} source={Assets.icons.filledStar}/>
         );
 
       if (halfStarsNumber == 1)
         ratingStarsComponent.push(
-          <Image style={styles.starStyle} source={Assets.icons.halfStar}/>
+          <Image key={`halfStar`} style={styles.starStyle} source={Assets.icons.halfStar}/>
         );
       
       for(let i = 0; i < emptyStarsNumber; i++)
         ratingStarsComponent.push(
-          <Image style={styles.starStyle} source={Assets.icons.emptyStar}/>
+          <Image key={`emptyStar${i}`} style={styles.starStyle} source={Assets.icons.emptyStar}/>
         );
       
         return (<View style={styles.starsContainer}>{ratingStarsComponent}</View>);
