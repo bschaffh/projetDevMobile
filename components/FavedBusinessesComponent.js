@@ -24,6 +24,7 @@ const FavedBusinesses = ({navigation}) => {
 
     return (
         <View style={styles.container}>
+            {Object.keys(savedBusinesses).length === 0 && <Text style={{flex: 1, fontSize: 30, alignSelf: 'center', paddingTop: 200}}>Vos favoris sont vides.</Text>}
             <FlatList
                 data={Object.keys(savedBusinesses)}
                 renderItem={({ item }) => 

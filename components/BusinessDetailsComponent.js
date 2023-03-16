@@ -89,7 +89,14 @@ const BusinessDetails = ({route}) => {
               <View style={styles.containerHeader}>
                 <Text style={styles.textTitle}>{business.name}</Text>
                 <Text>{business.rating}/5</Text>
-                { business.is_closed !== undefined && <Text>{business.is_closed ? "Fermé" : "Ouvert"}</Text>}
+                { 
+                  business.is_closed !== undefined && business.is_closed &&
+                  <Text style={{color: 'red'}}>Fermé</Text>
+                }
+                { 
+                  business.is_closed !== undefined && !business.is_closed &&
+                  <Text style={{color: 'green'}}>Ouvert</Text>
+                }
               </View>
               <View style={styles.containerFav}>
                 <TouchableOpacity activeOpacity = { .5 } onPress={favouritePressed}>
@@ -104,7 +111,7 @@ const BusinessDetails = ({route}) => {
             </View>
             <View style={styles.containerCardBottom}>
               <TouchableOpacity activeOpacity = { .5 } onPress={maps}>
-                <Text>À {Math.round(business.distance)} mètres.</Text>
+                { business.distance !== undefined &&<Text>À {Math.round(business.distance)} mètres.</Text> }
                 <Text>{business.location.display_address.join(", ")}</Text>
               </TouchableOpacity>
             </View>

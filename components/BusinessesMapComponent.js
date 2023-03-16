@@ -30,13 +30,12 @@ const BusinessesMap = ({route, navigation}) => {
 
     useEffect(() => {
       newSearchBusinesses();
-      console.log("searchDistance = ", searchDistance)
     }, []);
 
     const newSearchBusinesses = (latitude = null, longitude = null, newSearchDistance = null) => {
       setIsLoadingBusinesses(true);
       setPageNumber(0);
-      searchBusinesses(latitude ?? currentPosition.latitude, longitude ?? currentPosition.longitude, route.params.searchTerm, newSearchDistance ?? searchDistance, route.params.selectedCategories, 30, 0).then(
+      searchBusinesses(latitude ?? currentPosition.latitude, longitude ?? currentPosition.longitude, route.params.searchTermProp, newSearchDistance ?? searchDistance, route.params.selectedCategories, 30, 0).then(
           results => {
               setIsLoadingBusinesses(false);
               results?.businesses?.forEach(
@@ -189,7 +188,7 @@ const BusinessesMap = ({route, navigation}) => {
               (foundBusinesses == null || foundBusinesses?.length == 0) && !isLoadingBusinesses &&
               <View style={styles.noResultContainer}>
                 <Image resizeMode="stretch" source={require('../assets/sad.png')} style={styles.sadFace}/>
-                <Text style={styles.noResult}>Aucun résultat. Réessayez.</Text>
+                <Text style={styles.noResult}>Aucun résultat autour de vous.</Text>
               </View>
             }
           <TouchableOpacity style={styles.toggleButtonUp} onPress={toggleFlatList}>
