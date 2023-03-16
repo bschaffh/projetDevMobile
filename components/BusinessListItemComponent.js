@@ -7,7 +7,6 @@ import { Feather } from "expo-vector-icons";
 const BusinessListItem = ({business}) => {
     const navigation = useNavigation();
     const navigateToDetails = () => {
-        console.log(business);
         navigation.navigate('BusinessDetails', {
             business: business
         })
